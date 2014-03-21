@@ -1,13 +1,13 @@
 {
     "technologies": {
         "apis": [
-            "insert apis"
+            ""
         ],
         "platforms": [
-            "insert platforms"
+            "Raspberry Pi"
         ],
         "toolkits": [
-            "insert toolkits"
+            "Dart, Python, HTML, CSS, CoffeeScript"
         ]
     },
     "themes": [
