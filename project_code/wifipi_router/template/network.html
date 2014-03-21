@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Network</title>
+
+    <!-- Included CSS Files (Compressed) -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css">
+
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <style>
+    #lan-panel select{
+        width: 64px;
+    }
+    #lan-panel input{
+        width: 50px;
+    }
+    </style>
+</head>
+<body>
+
+{% include "../template/include/header.html" %}
+<div class="container">
+
+    <div class="row" style="border: 1px solid black; padding: 10px; margin: 10px 0 10px 0;">
+        <label>You want to</label>
+        <select id="wifi-mode-select">
+            <option {{ 'selected' if wifi_mode == 'create' else '' }} value="create">Create a WIFI</option>
+            <option {{ 'selected' if wifi_mode == 'join' else '' }} value="join">Join a WIFI</option>
+        </select>
+        <br />
+        <br />
+
+        <label>WIFI Name</label>
+        <input id="ssid" type="text" value="{{ ssid }}"/>
+        <br />
+        <br />
+
+        <label>Secure</label>
+        <select id="wifi-secure-select">
+            <option {{ 'selected' if secure == 'none' else '' }} value="none">None</option>
+            <option {{ 'selected' if secure == 'wpa2' else '' }} value="wpa2">WPA2</option>
+        </select>
+        <br />
+
+        <div class="wifi-password-panel {{ 'hide' if secure == 'none' else '' }}">
+            <label>Password</label>
+            <!--input type="password" value="{{ ssid_password }}"/-->
+            <input id="ssid_password" type="text" value="{{ ssid_password }}"/>
+            <br />
+            <!--input type="checkbox" checked class="btn" />
+            <span>Show Password</span-->
+        </div>
+        <br />
+        <button id="wifi-save" type="button" class="btn">SAVE and RESTART WIFI</button>
+    </div>
+
+    <div id="wan-panel" class="{{ 'hide' if wifi_mode == 'join' else '' }}" style="border: 1px solid orange; padding: 10px; margin: 0 0 10px 0;">
+        <label>WAN</label>
+        <select id="wan-connect-type">
+            <option {{ 'selected' if wan == 'pppoe' else '' }} value="pppoe">PPPoE</option>
+            <option {{ 'selected' if wan == 'dhcp' else '' }} value="dhcp">DHCP</option>
+            <!--option {{ 'selected' if wan == 'static' else '' }} value="static">Static</option-->
+        </select>
+        <br />
+
+        <div class="wan-pppoe-panel {{ 'hide' if wan != 'pppoe' else '' }}">
+            <label>PPPoE Username</label>
+            <input id="pppoe_username" type="text" value="{{ pppoe_username }}"/>
+
+            <label>Password</label>
+            <input id="pppoe_password" type="text" value="{{ pppoe_password }}"/>
+            <br />
+
+            <button id="wan-pppoe-save" type="button" class="btn">SAVE and TEST PPPoE</button>
+            <br />
+            <br />
+        </div>
+
+        <div class="wan-static-panel {{ 'hide' if wan != 'static' else '' }}">
+            <label>Static IP</label>
+            <input type="text" value=""/>
+
+            <label>Mask</label>
+            <input type="text" value=""/>
+            <br />
+
+            <button id="wan-static-save" type="button" class="btn">SAVE STATIC and RESTART NETWORK</button>
+            <br />
+            <br />
+        </div>
+
+        <div class="wan-dhcp-panel {{ 'hide' if wan != 'dhcp' else '' }}">
+            <!--label>DHCP</label-->
+            <button id="wan-dhcp-save" type="button" class="btn">RESTART NETWORK and GET IP by DHCP</button>
+        </div>
+    </div>
+
+    <div id="lan-panel" class="{{ 'hide' if wifi_mode == 'join' else '' }}" style="border: 1px solid green; background-color: yellow; padding: 10px; margin: 0 0 10px 0;">
+        <label>LAN IP Range</label>
+        <select id="lan-ip-range">
+            <option {{ 'selected' if router_ip.startswith('192') else '' }}>192</option>
+            <option {{ 'selected' if router_ip.startswith('10') else '' }}>10</option>
+        </select>
+
+        <span class="ip192 {{ 'hide' if router_ip.startswith('10') else '' }}"> . <input type="text" disabled="true" value="168"/> . <input id="ip192-segment-2" type="text" value="{{ router_ip.split('.')[2] if router_ip.startswith('192') else '1' }}"/> . <input type="text" disabled="true" value="*"/></span>
+        <span class="ip10 {{ 'hide' if router_ip.startswith('192') else '' }}"> . <input id="ip10-segment-1" type="text" class="ip10" value="{{ router_ip.split('.')[1] if router_ip.startswith('10') else '0' }}"/> . <input type="text" disabled="true" value="*"/> . <input type="text" disabled="true" value="*"/></span>
+        <br />
+
+        <label>Mask</label>
+        <span class="mask192 {{ 'hide' if router_ip.startswith('10') else '' }}"><input type="text" disabled="true" value="255"/> . <input type="text" disabled="true" value="255"/> . <input type="text" disabled="true" value="255"/> . <input type="text" disabled="true" value="0"/></span>
+        <span class="mask10 {{ 'hide' if router_ip.startswith('192') else '' }}"><input type="text" disabled="true" value="255"/> . <input type="text" disabled="true" value="255"/> . <input type="text" disabled="true" value="0"/> . <input type="text" disabled="true" value="0"/></span>
+        <br />
+        <button id="lan-save" type="button" class="btn">SAVE LAN SETTING</button>
+    </div>
+
+    <div style="border: 1px solid orange; padding: 10px; margin: 0 0 10px 0;">
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="/static/js/underscore-1.5.1.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="/static/js/coffee-script-1.6.3.min.js"></script>
+<script type="text/coffeescript" src="/static/coffee/network.coffee"></script>
+
+<!--script type="text/javascript" src="//localhost/static/js/detect.js"></script-->
+
+</html>
