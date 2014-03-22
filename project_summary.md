@@ -1,4 +1,4 @@
-# Project Title
+# Ring The WI-FI
 Insert the name of your project
 
 ## Authors
@@ -6,7 +6,9 @@ Insert the name of your project
 - KAN Jia, kernel1983@gmail.com
 
 ## Description
-Insert a description containing about 100 to 150 words, including your motivation and the meaning behind your idea and execution. The Judges will be keen to know how your idea pushes the boundaries of code and technology. 
+When people knock door, someone will open the door because they hearing the knocking. Internet is very generally today, people can get internet at home, in the coffee shop or office... It's like a greatest magic, we never see and touch it, but it always around of us. So, our idea is let people hearing the sounds of internet that make them to feel the internet. 
+
+We created a Triangle WiFi and showed it in one of GDG Activity, when people ring the Triangle WiFi, they can get the internet and hear the ring in the same time. In this test, most people think that's fun. Through this way, they think they felt the internet.
 
 ## Link to Prototype
 NOTE: If your project lives online you can add one or more links here. Make sure you have a stable version of your project running before linking it.
