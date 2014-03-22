@@ -6,9 +6,9 @@ Insert the name of your project
 - KAN Jia, kernel1983@gmail.com
 
 ## Description
-When people knock door, someone will open the door because they hearing the knocking. Internet is very generally today, people can get internet at home, in the coffee shop or office... It's like a greatest magic, we never see and touch it, but it always around of us. So, our idea is let people hearing the sounds of internet that make them to feel the internet. 
+"Ring The WiFi" is an installion about Internet. When people knock door, someone will open the door because they hearing the knocking. Internet is very generally today, people can get Internet at home, in the coffee shop or office... It's like a greatest magic, we never see and touch it, but it always around of us. So, our idea is let people hearing the sounds of Internet that make them to feel the Internet. 
 
-We created a Triangle WiFi and showed it in one of GDG Activity, when people ring the Triangle WiFi, they can get the internet and hear the ring in the same time. In this test, most people think that's fun. Through this way, they think they felt the internet.
+We created a Triangle WiFi and showed it in one of GDG Activity, when people ring the Triangle WiFi, they can get the Internet and hear the ring in the same time. In this test, most people think that's fun. Through this way, they think they felt the Internet.
 
 ## Link to Prototype
 NOTE: If your project lives online you can add one or more links here. Make sure you have a stable version of your project running before linking it.
@@ -32,4 +32,4 @@ NOTE: For additional images you can either use a relative link to an image on th
 
 ![Example Image](project_images/cover.jpg?raw=true "Example Image")
 
-https://www.youtube.com/watch?v=30yGOxJJ2PQ
+https://www.youtube.com/watch?v=K9Jai4PzdZE
