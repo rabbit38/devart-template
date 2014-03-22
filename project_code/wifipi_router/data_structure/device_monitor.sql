@@ -1,0 +1,5 @@
+CREATE TABLE `device_monitor` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `ipv4` TEXT NOT NULL DEFAULT '',
+  `name` TEXT NOT NULL DEFAULT ''
+);

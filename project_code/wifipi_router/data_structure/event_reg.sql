@@ -1,0 +1,6 @@
+CREATE TABLE `event_reg` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `email` TEXT NOT NULL UNIQUE,
+  `pass` TEXT NOT NULL DEFAULT '',
+  `datetime` DEFAULT CURRENT_TIMESTAMP
+);

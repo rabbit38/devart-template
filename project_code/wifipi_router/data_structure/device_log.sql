@@ -1,0 +1,7 @@
+CREATE TABLE `device_log` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `ipv4` TEXT NOT NULL DEFAULT '',
+  `mac` TEXT NOT NULL,
+  `name` TEXT NOT NULL DEFAULT '',
+  `datetime` DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,6 @@
+CREATE TABLE `event_reg_mac` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `email` TEXT NOT NULL DEFAULT '',
+  `mac` TEXT NOT NULL DEFAULT '',
+  `datetime` DEFAULT CURRENT_TIMESTAMP
+);

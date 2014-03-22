@@ -1,0 +1,20 @@
+
+noipdefault
+defaultroute
+
+hide-password
+lcp-echo-interval 20
+lcp-echo-failure 3
+
+connect /bin/true
+noauth
+persist
+mtu 1492
+
+noaccomp
+default-asyncmap
+
+plugin rp-pppoe.so eth0
+user "15850325005"
+usepeerdns
+

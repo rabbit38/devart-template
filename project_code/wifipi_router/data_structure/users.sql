@@ -1,0 +1,5 @@
+CREATE TABLE `users` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `login` TEXT NOT NULL DEFAULT '',
+  `password` TEXT NOT NULL DEFAULT ''
+);

@@ -1,0 +1,6 @@
+CREATE TABLE `event_slide` (
+  `id` INTEGER NOT NULL PRIMARY KEY,
+  `title` TEXT NOT NULL DEFAULT '',
+  `content` TEXT NOT NULL,
+  `datetime` DEFAULT CURRENT_TIMESTAMP
+);
