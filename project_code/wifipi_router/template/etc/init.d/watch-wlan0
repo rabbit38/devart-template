@@ -1,0 +1,61 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:       watch-lan0
+# Required-Start: $network $remote_fs $syslog
+# Required-Stop:  $network $remote_fs $syslog
+# Default-Start:  2 3 4 5
+# Default-Stop:   0 1 6
+# Description:    Make sure wlan0 works as router
+### END INIT INFO
+
+# Provide skeleton LSB log functions for backports which don't have LSB functions.
+if [ -f /lib/lsb/init-functions ]; then
+         . /lib/lsb/init-functions
+else
+         log_warning_msg () {
+            echo "${@}."
+         }
+
+         log_success_msg () {
+            echo "${@}."
+         }
+
+         log_daemon_msg () {
+            echo -n "${1}: $2"
+         }
+
+	 log_end_msg () {
+            if [ $1 -eq 0 ]; then
+              echo "."
+            elif [ $1 -eq 255 ]; then
+              /bin/echo -e " (warning)."
+            else
+              /bin/echo -e " failed!"
+            fi
+         }
+fi
+
+
+while true; do
+    result=$(ifconfig wlan0|grep "inet addr:{{ router_ip }}")
+    if [[ "$result" != "" ]]
+    then
+        /etc/init.d/dnsmasq restart
+        break
+    else
+        while true; do
+            result=$(ifconfig wlan0|grep "inet addr:{{ router_ip }}")
+            if [[ "$result" != "" ]]
+            then
+                break
+            else
+                ifdown wlan0 --force
+                sleep 1
+                ifup wlan0
+            fi
+        done
+        sleep 1
+        /etc/init.d/hostapd restart
+        sleep 1
+    fi
+done
