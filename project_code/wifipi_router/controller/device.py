@@ -104,6 +104,13 @@ class PingHandler(BaseHandler):
         self.get_argument("wifidog_uptime")
         self.finish("Pong")
 
+
+current_remote_ip = None
+current_client = None
+waiting_clients = {}
+authed_ips = set()
+queue_ips = []
+
 class LoginHandler(BaseHandler):
     def get(self):
         #/wifi/login/?gw_address=10.0.0.1&gw_port=2060&gw_id=0C8268174423&url=http%3A//init-p01st.push.apple.com/bag
@@ -116,17 +123,10 @@ class LoginHandler(BaseHandler):
         remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
         device_logs = conn.query("SELECT * FROM device_log WHERE ipv4 = %s ORDER BY id DESC", remote_ip)
         if len(device_logs) == 0:
-            self.finish("Something wrong!")
-            return
-        mac = device_logs[0]["mac"]
-
-        # find email by mac?
-        reg = conn_remote.get("SELECT * FROM event_reg_mac WHERE mac = %s", mac)
-        if reg:
-            self.redirect("http://10.0.0.1:2060/wifidog/auth?token=%s" % mac)
+            self.finish({"error": "Can't find MAC address by the IP!"})
             return
 
-        self.render("../template/wifi/login.html")
+        self.render("../template/wifi/waiting.html")
 
     def post(self):
         email = self.get_argument("email")
@@ -181,3 +181,60 @@ class GWMessageHandler(BaseHandler):
 class AppleTestHandler(BaseHandler):
     def get(self):
         self.finish("WifiPi Welcome")
+
+
+class QueueAPIHandler(BaseHandler):
+    def get(self):
+        """Join the queue and get current position in the queue"""
+        global current_remote_ip, queue_ips
+        remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
+
+        print queue_ips
+        if current_remote_ip is None or current_remote_ip == remote_ip:
+            current_remote_ip = remote_ip
+            self.finish({"position": 0, "msg":"ring_the_bell"})
+        else:
+            if remote_ip not in queue_ips:
+                queue_ips.append(remote_ip)
+            position = queue_ips.index(remote_ip) + 1
+            self.finish({"position": position, "msg":"please_wait"})
+
+    def post(self):
+        """Waiting for queue position update"""
+        global current_remote_ip, queue_ips, waiting_clients
+        remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
+
+        if current_remote_ip is None:
+            current_remote_ip = remote_ip
+        elif current_remote_ip != remote_ip and remote_ip not in queue_ips:
+            queue_ips.append(remote_ip)
+
+        self._auto_finish = False
+        waiting_clients[remote_ip] = self
+
+class TiggerAPIHandler(BaseHandler):
+    def get(self):
+        global current_remote_ip, queue_ips, authed_ips, waiting_clients
+        if current_remote_ip not in authed_ips:
+            #authed_ips.add(current_remote_ip)
+            pass
+
+        current_client = waiting_clients.get(current_remote_ip)
+        if current_client:
+            current_client.finish({"msg":"online_now", "position": 0})
+            del waiting_clients[current_remote_ip]
+
+        for ip in queue_ips:
+            client = waiting_clients.get(ip)
+            if client:
+                del waiting_clients[ip]
+            position = queue_ips.index(ip) + 1
+            client.finish({"msg":"queue", "position":position})
+
+        if queue_ips:
+            current_remote_ip = queue_ips.pop(0)
+        else:
+            current_remote_ip = None
+
+        self.finish({"length_of_queue": len(queue_ips)})
+

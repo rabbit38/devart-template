@@ -46,6 +46,8 @@ handlers = [
     (r"/wifi/auth/", device.AuthHandler),
     (r"/wifi/portal/", device.PortalHandler),
     (r"/wifi/gw_message.php", device.GWMessageHandler),
+    (r"/api/wifi/queue", device.QueueAPIHandler),
+    (r"/api/wifi/tigger", device.TiggerAPIHandler),
 
     (r"/music", main.MusicHandler),
     (r"/api/play", main.PlayAPIHandler),
