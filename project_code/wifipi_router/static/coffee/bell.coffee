@@ -1,10 +1,13 @@
 $ ->
     waiting = () ->
         $.post "/api/wifi/queue", (data) ->
-            alert data["msg"]+data["position"]
+            $("#msg").text(data["msg"]+data["position"])
+            if data["msg"] == "online_now"
+                window.location.href = data["redirect"]
+                return
             waiting()
 
     $.getJSON "/api/wifi/queue", (data) ->
-        alert data["position"]
+        $("#msg").text(data["msg"]+data["position"])
         waiting()
 

@@ -128,55 +128,39 @@ class LoginHandler(BaseHandler):
 
         self.render("../template/wifi/waiting.html")
 
-    def post(self):
-        email = self.get_argument("email")
-        """
-        reg = conn_remote.get("SELECT * FROM event_reg WHERE email = %s", email)
-        if not reg:
-            self.finish("You email is not registered.")
-            return
-        """
-
-        regs = conn_remote.query("SELECT * FROM event_reg_mac WHERE email = %s", email)
-        if len(regs) >= 2:
-            self.finish("Sorry, your email has been used for too many times")
-            return
-
-        # find mac by ip?
-        remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
-        device_logs = conn.query("SELECT * FROM device_log WHERE ipv4 = %s ORDER BY id DESC", remote_ip)
-        if len(device_logs) == 0:
-            self.finish("Something wrong!")
-            return
-        mac = device_logs[0]["mac"]
-
-        conn_remote.execute("INSERT INTO event_reg_mac (email, mac) VALUES(%s, %s)", email, mac)
-
-        # create an unquie token in database
-        self.redirect("http://10.0.0.1:2060/wifidog/auth?token=%s" % mac)
 
 class AuthHandler(BaseHandler):
     def get(self):
+        global authed_ips
         # find the mac address, user ip by token
         #/wifi/auth/?stage=login&ip=10.0.0.18&mac=84:38:35:52:ea:08&token=1234&incoming=0&outgoing=0&gw_id=0810781EE54D
         mac = self.get_argument("mac")
 
-        reg = conn_remote.query("SELECT * FROM event_reg_mac WHERE mac = %s", mac)
-        if reg:
+        device_logs = conn.query("SELECT * FROM device_log WHERE mac = %s ORDER BY id DESC", mac)
+        if len(device_logs) == 0:
+            self.finish({"error": "Can't find MAC address by the IP!"})
+            return
+        ipv4 = device_logs[0]["ipv4"]
+
+        if ipv4 in authed_ips:
             self.finish("Auth: 1") #success
             return
 
         self.finish("Auth: 0")
 
+
 class PortalHandler(BaseHandler):
     def get(self):
-        self.redirect("/")
-        #self.finish("Welcome")
+        #self.redirect("/")
+        #self.finish("Welcome to Internet")
+        self.render("../template/wifi/welcome.html")
+
 
 class GWMessageHandler(BaseHandler):
     def get(self):
         #http://10.0.0.1/wifi/gw_message.php?message=denied
         self.finish("Sorry")
+
 
 class AppleTestHandler(BaseHandler):
     def get(self):
@@ -192,12 +176,12 @@ class QueueAPIHandler(BaseHandler):
         print queue_ips
         if current_remote_ip is None or current_remote_ip == remote_ip:
             current_remote_ip = remote_ip
-            self.finish({"position": 0, "msg":"ring_the_bell"})
+            self.finish({"msg":"ring_the_bell", "position": 0})
         else:
             if remote_ip not in queue_ips:
                 queue_ips.append(remote_ip)
             position = queue_ips.index(remote_ip) + 1
-            self.finish({"position": position, "msg":"please_wait"})
+            self.finish({"msg":"please_wait", "position": position})
 
     def post(self):
         """Waiting for queue position update"""
@@ -216,20 +200,28 @@ class TiggerAPIHandler(BaseHandler):
     def get(self):
         global current_remote_ip, queue_ips, authed_ips, waiting_clients
         if current_remote_ip not in authed_ips:
-            #authed_ips.add(current_remote_ip)
-            pass
+            authed_ips.add(current_remote_ip)
 
         current_client = waiting_clients.get(current_remote_ip)
         if current_client:
-            current_client.finish({"msg":"online_now", "position": 0})
+            device_logs = conn.query("SELECT * FROM device_log WHERE ipv4 = %s ORDER BY id DESC", current_remote_ip)
+            if len(device_logs) == 0:
+                self.finish({"error": "Can't find MAC address by the IP!"})
+                return
+            mac = device_logs[0]["mac"]
+
+            current_client.finish({"msg":"online_now", "position": 0, "redirect": "http://10.0.0.1:2060/wifidog/auth?token=%s" % mac})
             del waiting_clients[current_remote_ip]
 
         for ip in queue_ips:
             client = waiting_clients.get(ip)
             if client:
                 del waiting_clients[ip]
-            position = queue_ips.index(ip) + 1
-            client.finish({"msg":"queue", "position":position})
+            position = queue_ips.index(ip)
+            if position:
+                client.finish({"msg":"queue", "position":position})
+            else:
+                client.finish({"msg":"ring_the_bell", "position":position})
 
         if queue_ips:
             current_remote_ip = queue_ips.pop(0)
