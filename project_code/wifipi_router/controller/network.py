@@ -254,18 +254,16 @@ class NetworkWifiAPIHandler(BaseHandler):
             os.system("update-rc.d dnsmasq disable 2")
             os.system("update-rc.d hostapd disable 2")
 
-            #os.system("/etc/init.d/hostapd stop")
-            #os.system("/etc/init.d/dnsmasq stop")
-            #os.system("/etc/init.d/networking restart")
+            os.system("/etc/init.d/hostapd stop")
+            os.system("/etc/init.d/dnsmasq stop")
+            os.system("/etc/init.d/networking restart")
         else:
             os.system("update-rc.d watch-wlan0 enable 2")
             os.system("update-rc.d dnsmasq enable 2")
             os.system("update-rc.d hostapd enable 2")
 
-            #os.system("/etc/init.d/hostapd restart")
-            #os.system("/etc/init.d/watch-wlan0")
-
-        os.system("reboot")
+            os.system("/etc/init.d/hostapd restart")
+            os.system("/etc/init.d/watch-wlan0")
 
 class NetworkWanAPIHandler(BaseHandler):
     def post(self):
