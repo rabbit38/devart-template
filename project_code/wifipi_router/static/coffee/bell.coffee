@@ -1,6 +1,6 @@
 $ ->
     waiting = () ->
-        $.post "/api/wifi/queue", (data) ->
+        $.post "/api/wifi/queue_status", (data) ->
             $("#msg").text(data["msg"]+data["position"])
             if data["msg"] == "online_now"
                 window.location.href = data["redirect"]

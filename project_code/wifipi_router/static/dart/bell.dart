@@ -3,17 +3,23 @@ import 'dart:convert';
 
 void main() {
     // print("hello, world!");
-    //querySelector("#msg").text = "Hello world!";
 
-    // $.getJSON "/api/wifi/queue", (data) ->
+    // $.getJSON "/api/wifi/queue_status", (data) ->
     //     $("#msg").text(data["msg"]+data["position"])
     //     waiting()
 
-    var path = '/api/wifi/queue';
-    HttpRequest.getString(path)
-        .then((String fileContents) {
-            print(fileContents.length);
-            waiting();
+    HttpRequest.getString('/api/wifi/queue_status')
+        .then((String responseText) {
+            Map data = JSON.decode(responseText);
+            if (data["msg"] == "ring_the_bell") {
+                print(data["position"]);
+                querySelector("#msg").text = "Time for you to ring the bell!";
+                waiting();
+            } else if (data["msg"] == "queue") {
+                print(data["position"]);
+                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                waiting();
+            }
         })
         .catchError((Error error) {
             print(error.toString());
@@ -33,11 +39,17 @@ void waiting() {
     var request = new HttpRequest();
     request.onReadyStateChange.listen((_) {
         if (request.readyState == HttpRequest.DONE && (request.status == 200 || request.status == 0)) {
-            // data saved OK.
-            Map data = JSON.decode(request.responseText); // parse response text
+            Map data = JSON.decode(request.responseText);
             if (data["msg"] == "online_now") {
-                print(data["position"]);
                 print(data["redirect"]);
+                window.location.href = data["redirect"];
+            } else if (data["msg"] == "ring_the_bell") {
+                print(data["position"]);
+                querySelector("#msg").text = "Time for you to ring the bell!";
+                waiting();
+            } else if (data["msg"] == "queue") {
+                print(data["position"]);
+                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
                 waiting();
             }
         }

@@ -167,7 +167,7 @@ class AppleTestHandler(BaseHandler):
         self.finish("WifiPi Welcome")
 
 
-class QueueAPIHandler(BaseHandler):
+class QueueStatusAPIHandler(BaseHandler):
     def get(self):
         """Join the queue and get current position in the queue"""
         global current_remote_ip, queue_ips
@@ -181,20 +181,50 @@ class QueueAPIHandler(BaseHandler):
             if remote_ip not in queue_ips:
                 queue_ips.append(remote_ip)
             position = queue_ips.index(remote_ip) + 1
-            self.finish({"msg":"please_wait", "position": position})
+            self.finish({"msg":"queue", "position": position})
 
+class QueueAPIHandler(BaseHandler):
     def post(self):
         """Waiting for queue position update"""
         global current_remote_ip, queue_ips, waiting_clients
-        remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
+        self.remote_ip = self.request.remote_ip if self.request.remote_ip != '127.0.0.1' else self.request.headers['X-Forwarded-For']
 
         if current_remote_ip is None:
-            current_remote_ip = remote_ip
-        elif current_remote_ip != remote_ip and remote_ip not in queue_ips:
-            queue_ips.append(remote_ip)
+            current_remote_ip = self.remote_ip
+        elif current_remote_ip != self.remote_ip and self.remote_ip not in queue_ips:
+            queue_ips.append(self.remote_ip)
 
         self._auto_finish = False
-        waiting_clients[remote_ip] = self
+        waiting_clients[self.remote_ip] = self
+
+    def on_connection_close(self):
+        global current_remote_ip, queue_ips, waiting_clients
+        print "on_connection_close"
+        if self.remote_ip == current_remote_ip:
+            if waiting_clients.get(current_remote_ip):
+                del waiting_clients[current_remote_ip]
+
+        elif self.remote_ip in queue_ips:
+            if waiting_clients.get(self.remote_ip):
+                del waiting_clients[self.remote_ip]
+            queue_ips.remove(self.remote_ip)
+
+        for ip in queue_ips:
+            client = waiting_clients.get(ip)
+            if client:
+                del waiting_clients[ip]
+            position = queue_ips.index(ip)
+            if position:
+                client.finish({"msg":"queue", "position":position})
+            else:
+                client.finish({"msg":"ring_the_bell", "position":position})
+
+        if self.remote_ip == current_remote_ip:
+            if queue_ips:
+                current_remote_ip = queue_ips.pop(0)
+            else:
+                current_remote_ip = None
+
 
 class TiggerAPIHandler(BaseHandler):
     def get(self):
