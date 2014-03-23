@@ -24,8 +24,7 @@ function test() {
 [http://www.tornadoweb.org/](http://www.tornadoweb.org/ "Tornado")
 
 ## Images & Videos
-NOTE: For additional images you can either use a relative link to an image on this repo or an absolute link to an externally hosted image.
 
-![Example Image](project_images/cover.jpg?raw=true "Example Image")
+![Ring the WiFi](project_images/cover.jpg?raw=true "Ring the WiFi")
 
 https://www.youtube.com/watch?v=OBHxqFjtNug
