@@ -34,5 +34,5 @@ if __name__ == "__main__":
             if i > 50:
                 print i, input_value
                 urllib2.urlopen("http://127.0.0.1/api/wifi/tigger")
-                time.sleep(0.5)
+                time.sleep(10)
             i = 0
