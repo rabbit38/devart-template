@@ -13,11 +13,11 @@ void main() {
             Map data = JSON.decode(responseText);
             if (data["msg"] == "ring_the_bell") {
                 print(data["position"]);
-                querySelector("#msg").text = "Time for you to ring the bell!";
+                querySelector("#msg").innerHtml = "<h1>Time for you to ring the bell!</h1><img src='/static/img/ring_now.gif' />";
                 waiting();
             } else if (data["msg"] == "queue") {
                 print(data["position"]);
-                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                querySelector("#msg").innerHtml = "<img src='/static/img/you_are_in_the_queue.jpg' /><br /><h1><span>${data['position']}</span> people<br /> in front of you</h1>";
                 waiting();
             }
         })
@@ -45,11 +45,11 @@ void waiting() {
                 window.location.href = data["redirect"];
             } else if (data["msg"] == "ring_the_bell") {
                 print(data["position"]);
-                querySelector("#msg").text = "Time for you to ring the bell!";
+                querySelector("#msg").innerHtml = "<h1>Time for you to ring the bell!</h1><img src='/static/img/ring_now.gif' />";
                 waiting();
             } else if (data["msg"] == "queue") {
                 print(data["position"]);
-                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                querySelector("#msg").innerHtml = "<img src='/static/img/you_are_in_the_queue.jpg' /><br /><h1><span>${data['position']}</span> people<br /> in front of you</h1>";
                 waiting();
             }
         }
