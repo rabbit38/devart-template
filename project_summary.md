@@ -1,5 +1,4 @@
 # Ring The WiFi
-Insert the name of your project
 
 ## Authors
 - LIU Zhen, rabbit38@gmail.com
@@ -10,11 +9,53 @@ Insert the name of your project
 
 We created a Triangle WiFi and showed it in one of GDG Activity, when people ring the Triangle WiFi, they can get the Internet and hear the ring in the same time. In this test, most people think that's fun. Through this way, they think they felt the Internet.
 
-## Example Code
-NOTE: Wrap your code blocks or any code citation by using ``` like the example below.
+## Dart Example Code
 ```
-function test() {
-  console.log("Printing a test");
+import 'dart:html';
+import 'dart:convert';
+
+void main() {
+    HttpRequest.getString('/api/wifi/queue_status')
+        .then((String responseText) {
+            Map data = JSON.decode(responseText);
+            if (data["msg"] == "ring_the_bell") {
+                print(data["position"]);
+                querySelector("#msg").text = "Time for you to ring the bell!";
+                waiting();
+            } else if (data["msg"] == "queue") {
+                print(data["position"]);
+                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                waiting();
+            }
+        })
+        .catchError((Error error) {
+            print(error.toString());
+        });
+}
+
+void waiting() {
+    var request = new HttpRequest();
+    request.onReadyStateChange.listen((_) {
+        if (request.readyState == HttpRequest.DONE && (request.status == 200 || request.status == 0)) {
+            Map data = JSON.decode(request.responseText);
+            if (data["msg"] == "online_now") {
+                print(data["redirect"]);
+                window.location.href = data["redirect"];
+            } else if (data["msg"] == "ring_the_bell") {
+                print(data["position"]);
+                querySelector("#msg").text = "Time for you to ring the bell!";
+                waiting();
+            } else if (data["msg"] == "queue") {
+                print(data["position"]);
+                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                waiting();
+            }
+        }
+    });
+
+    var url = '/api/wifi/queue';
+    request.open('POST', url);
+    request.send();
 }
 ```
 ## Links to External Libraries

@@ -10,51 +10,51 @@ Wifidog is an important part of the system. However, it requires the auth server
 ## Dart language
 It also took us some time to study Dart language. We spend half day to finish those code (first time to use Dart)
 
-	import 'dart:html';
-	import 'dart:convert';
-	
-	void main() {
-	    HttpRequest.getString('/api/wifi/queue_status')
-	        .then((String responseText) {
-	            Map data = JSON.decode(responseText);
-	            if (data["msg"] == "ring_the_bell") {
-	                print(data["position"]);
-	                querySelector("#msg").text = "Time for you to ring the bell!";
-	                waiting();
-	            } else if (data["msg"] == "queue") {
-	                print(data["position"]);
-	                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
-	                waiting();
-	            }
-	        })
-	        .catchError((Error error) {
-	            print(error.toString());
-	        });
-	}
-	
-	void waiting() {
-	    var request = new HttpRequest();
-	    request.onReadyStateChange.listen((_) {
-	        if (request.readyState == HttpRequest.DONE && (request.status == 200 || request.status == 0)) {
-	            Map data = JSON.decode(request.responseText);
-	            if (data["msg"] == "online_now") {
-	                print(data["redirect"]);
-	                window.location.href = data["redirect"];
-	            } else if (data["msg"] == "ring_the_bell") {
-	                print(data["position"]);
-	                querySelector("#msg").text = "Time for you to ring the bell!";
-	                waiting();
-	            } else if (data["msg"] == "queue") {
-	                print(data["position"]);
-	                querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
-	                waiting();
-	            }
-	        }
-	    });
-	
-	    var url = '/api/wifi/queue';
-	    request.open('POST', url);
-	    request.send();
-	}
+    import 'dart:html';
+    import 'dart:convert';
+
+    void main() {
+        HttpRequest.getString('/api/wifi/queue_status')
+            .then((String responseText) {
+                Map data = JSON.decode(responseText);
+                if (data["msg"] == "ring_the_bell") {
+                    print(data["position"]);
+                    querySelector("#msg").text = "Time for you to ring the bell!";
+                    waiting();
+                } else if (data["msg"] == "queue") {
+                    print(data["position"]);
+                    querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                    waiting();
+                }
+            })
+            .catchError((Error error) {
+                print(error.toString());
+            });
+    }
+
+    void waiting() {
+        var request = new HttpRequest();
+        request.onReadyStateChange.listen((_) {
+            if (request.readyState == HttpRequest.DONE && (request.status == 200 || request.status == 0)) {
+                Map data = JSON.decode(request.responseText);
+                if (data["msg"] == "online_now") {
+                    print(data["redirect"]);
+                    window.location.href = data["redirect"];
+                } else if (data["msg"] == "ring_the_bell") {
+                    print(data["position"]);
+                    querySelector("#msg").text = "Time for you to ring the bell!";
+                    waiting();
+                } else if (data["msg"] == "queue") {
+                    print(data["position"]);
+                    querySelector("#msg").text = "There are ${data['position']} people in the queue. Please wait!";
+                    waiting();
+                }
+            }
+        });
+
+        var url = '/api/wifi/queue';
+        request.open('POST', url);
+        request.send();
+    }
 
 It works!
