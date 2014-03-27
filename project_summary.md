@@ -60,9 +60,11 @@ void waiting() {
 ```
 ## Links to External Libraries
 
-[https://github.com/WifiPi/router](https://github.com/WifiPi/router "WifiPi")
+[WifiPi project](https://github.com/WifiPi/router "WifiPi")
 
-[http://www.tornadoweb.org/](http://www.tornadoweb.org/ "Tornado")
+[Tornadoweb/](http://www.tornadoweb.org/ "Tornado")
+
+[Raspbian](http://www.raspbian.org/ "Raspbian")
 
 ## Images & Videos
 
