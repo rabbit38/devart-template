@@ -1,4 +1,4 @@
-Mei just finished the new UI before we "Mark as complete" the project.
+We just updated the new UI before we "Mark as complete" the project.
 
 ![Ring the WiFi](../project_images/new_look_ring_the_bell.png?raw=true)
 

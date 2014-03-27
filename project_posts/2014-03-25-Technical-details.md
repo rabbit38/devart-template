@@ -14,8 +14,6 @@ To block the router users from accessing the Internet, we use the project wifido
 
 It's a quite challenge that we need to connect those pages with the electricity wire. Most of the web pages are static, some of them are dynamic. But now we need more advanced pages, which have to be "real time" to know that we have just "Ring the WiFi".
 
-Oh, one more thing, if two or more users is trying to "Ring the WiFi", they have to queue. So when the first user rings, he can access Internet, meanwhile the second user became the first one in the queue. All the waiting users' web pages need to be notified in real time.
-
-That's a great magic show!
+Oh, one more thing, if two or more users is trying to "Ring the WiFi", they have to queue. So when the first user rings, he can access Internet, meanwhile the second user becomes the first one in the queue. All the waiting users' web pages are notified in real time.
 
 KJ
