@@ -62,7 +62,7 @@ void waiting() {
 
 [WifiPi project](https://github.com/WifiPi/router "WifiPi")
 
-[Tornadoweb/](http://www.tornadoweb.org/ "Tornado")
+[Tornadoweb](http://www.tornadoweb.org/ "Tornado")
 
 [Raspbian](http://www.raspbian.org/ "Raspbian")
 
