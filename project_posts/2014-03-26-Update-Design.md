@@ -10,6 +10,6 @@ Also it looks great on laptop popup window:
 
 ![Ring the WiFi](../project_images/new_look_ring_the_bell_on_os_x.png?raw=true)
 
-Now we're almost ready for DevArt
+Now we're almost ready for DevArt.
 
 KJ
